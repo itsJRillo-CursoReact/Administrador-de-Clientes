@@ -1,18 +1,10 @@
 {
   "clientes": [
     {
-      "nombre": "Juan",
-      "empresa": "Spotify",
-      "correo": "jmorillolabour@gmail.com",
-      "telefono": "623045379",
-      "notas": "Algo",
-      "id": 1
-    },
-    {
       "nombre": "Ismael",
       "empresa": "Spotify",
       "correo": "jmorillolabour@gmail.com",
-      "telefono": "623045379",
+      "telefono": "623045380",
       "notas": "Algo",
       "id": 2
     },
@@ -23,6 +15,14 @@
       "telefono": "1231523423421",
       "notas": "Le gusta Kirby",
       "id": 3
+    },
+    {
+      "nombre": "Ysabel",
+      "empresa": "NTT DATA",
+      "correo": "correo@correo.com",
+      "telefono": "132123123123",
+      "notas": "Recomendada",
+      "id": 4
     }
   ]
 }

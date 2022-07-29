@@ -166,7 +166,7 @@ const Formulario = ({ cliente, cargando }) => {
 
               <input
                 type="submit"
-                value={cliente?.nombre ? "Editar Cliente" : "Agregar Paciente"}
+                value={cliente?.nombre ? "Editar Cliente" : "Agregar Cliente"}
                 className="mt-5 w-full py-3 bg-blue-800 text-white uppercase text-center font-bold text-lg"
               />
             </Form>
