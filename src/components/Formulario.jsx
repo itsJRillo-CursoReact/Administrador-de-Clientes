@@ -2,9 +2,10 @@ import { Formik, Form, Field } from "formik";
 import * as yup from "yup";
 import Alert from "./Alert";
 import { useNavigate } from "react-router-dom";
+import Spinner from "./Spinner";
 
-const Formulario = () => {
-    const navigate = useNavigate()
+const Formulario = ({ cliente, cargando }) => {
+  const navigate = useNavigate();
 
   const nuevoClienteSchema = yup.object().shape({
     nombre: yup
@@ -13,55 +14,72 @@ const Formulario = () => {
       .max(20, "El nombre es muy largo")
       .required("El nombre del cliente es obligatorio"),
 
-    empresa: yup.string()
-                .required("El nombre de la empresa es obligatorio"),
+    empresa: yup.string().required("El nombre de la empresa es obligatorio"),
 
-    correo: yup.string()
-                .email("Correo no válido")
-                .required("El correo es obligatorio"),
+    correo: yup
+      .string()
+      .email("Correo no válido")
+      .required("El correo es obligatorio"),
 
-    telefono: yup.number()
-                .integer("Número no válido")
-                .positive("Número no válido")
-                .typeError("Número no válido")
+    telefono: yup
+      .number()
+      .integer("Número no válido")
+      .positive("Número no válido")
+      .typeError("Número no válido"),
   });
 
-  const handleSubmit = async (valores) =>  {
-    try{
-        const url = "http://localhost:3000/clientes"
+  const handleSubmit = async (valores) => {
+    try {
+      let respuesta;
+      if (cliente.id) {
+        const url = `http://localhost:3000/clientes/${cliente.id}`;
 
-        const respuesta = await fetch(url, {
-            method:"POST",
-            body: JSON.stringify(valores),
-            headers: {
-                "Content-Type":"application/json"
-            }
-        })
+        respuesta = await fetch(url, {
+          method: "PUT",
+          body: JSON.stringify(valores),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } else {
+        const url = "http://localhost:3000/clientes";
 
-        navigate("/clientes")
-    } 
-    catch (error) {
-        console.log("error")
+        respuesta = await fetch(url, {
+          method: "POST",
+          body: JSON.stringify(valores),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
+
+      await respuesta.json();
+      navigate("/clientes");
+    } catch (error) {
+      console.log("error");
     }
   };
 
-  return (
+  return cargando ? (
+    <Spinner />
+  ) : (
     <div className="bg-white mt-10 px-5 py-10 rounded-md shadow-md md:w-3/4 mx-auto">
       <h1 className="text-gray-600 font-bold text-xl uppercase text-center">
-        Agregar cliente
+        {cliente?.nombre ? "Editar Cliente" : "Agregar cliente"}
       </h1>
 
       <Formik
         initialValues={{
-          nombre: "",
-          empresa: "",
-          correo: "",
-          telefono: "",
-          notas: "",
+          nombre: cliente?.nombre ?? "",
+          empresa: cliente?.empresa ?? "",
+          correo: cliente?.correo ?? "",
+          telefono: cliente?.telefono ?? "",
+          notas: cliente?.notas ?? "",
         }}
-        onSubmit={ async (values, {resetForm}) => {
+        enableReinitialize={true}
+        onSubmit={async (values, { resetForm }) => {
           await handleSubmit(values);
-          resetForm()
+          resetForm();
         }}
         validationSchema={nuevoClienteSchema}
       >
@@ -148,7 +166,7 @@ const Formulario = () => {
 
               <input
                 type="submit"
-                value="Agregar Cliente"
+                value={cliente?.nombre ? "Editar Cliente" : "Agregar Paciente"}
                 className="mt-5 w-full py-3 bg-blue-800 text-white uppercase text-center font-bold text-lg"
               />
             </Form>
@@ -157,6 +175,11 @@ const Formulario = () => {
       </Formik>
     </div>
   );
+};
+
+Formulario.defaultProps = {
+  cliente: {},
+  cargando: false,
 };
 
 export default Formulario;
